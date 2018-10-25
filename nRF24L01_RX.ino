@@ -37,12 +37,12 @@ void setup()
 void loop() 
 {
   digitalWrite(CE_pin, HIGH);                               // Making radio ready to get into TX/RX mode.        
-  uint8_t rxdByte = getPayload();                     
-  if (rxdByte == 0x55)                                      // Receiving payload that has been dis-assembled from packet and checking for data.
-    digitalWrite(LED_pin, HIGH);
-  else if(rxdByte == 0xAA)
-    digitalWrite(LED_pin, LOW);
-  Serial.println(rxdByte, HEX);
+  uint8_t rxdByte = getPayload();                           // Making a copy of received payload that has been dis-assembled from packet.
+  if (rxdByte == 0x55)                                      // Check for payload.
+    digitalWrite(LED_pin, HIGH);                            // Turning ON LED if payload is 0x55.
+  else if(rxdByte == 0xAA)                                  // Check for payload.
+    digitalWrite(LED_pin, LOW);                             // Turning OFF LED if payload is 0xAA.
+  Serial.println(rxdByte, HEX);                             // Displaying received payload on serial terminal.
   digitalWrite(CE_pin, LOW);                                // Falling back to standby mode (I) or (II).
 }
 
@@ -80,5 +80,5 @@ byte getPayload()
   rxPayload = SPI.transfer(R_REGISTER);                     // Reading the content of RX FIFO with command: R_REGISTER.
   digitalWrite(CSN_pin, HIGH);                              // Setting CSN = 1 to make SPI idle.
   writeReg(STATUS, 0x70);                                   // Clearing all interrupts including RX_DR in STATUS register.
-  return (rxPayload);
+  return (rxPayload);                                       // Returning payload back to caller function.
 }
